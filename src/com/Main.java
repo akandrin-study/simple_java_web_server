@@ -8,9 +8,9 @@ public class Main {
     public static void main(String[] args) {
 
         Thread serverThread = new Thread(() -> {
-            Server server = null;
+            HttpServer server = null;
             try {
-                server = new Server(7777);
+                server = new HttpServer(80);
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -34,33 +34,9 @@ public class Main {
             }
         });
 
-        Thread clientThread = new Thread(() ->
-        {
-            try {
-                Client client = new Client("127.0.0.1", 7777);
-
-                while (true) {
-                    Scanner scanner = new Scanner(System.in);
-                    String line = scanner.nextLine();
-                    client.SendMessage(line);
-                    String answer = client.RecvMessage();
-                    System.out.println(answer);
-                    if (answer.equals("bye")) {
-                        return;
-                    }
-                }
-            }
-            catch(IOException e)
-            {
-                e.printStackTrace();
-            }
-        });
-
         try {
             serverThread.start();
-            clientThread.start();
             serverThread.join();
-            clientThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
